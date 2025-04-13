@@ -16,18 +16,6 @@
       }
     }
 
-    function populateCategoryOptions() {
-      const select = document.getElementById('quiz-category');
-      select.innerHTML = '';
-      quizCategories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.value;
-        option.textContent = cat.label;
-        select.appendChild(option);
-      });
-      select.addEventListener('change', () => renderQuiz(select.value));
-    }
-
     function getRandomQuiz(category) {
       const available = quizzes[category] || [];
       if (available.length === 0) return null;
@@ -97,31 +85,36 @@
       const level = Math.floor(xp / 100);
 
       const buttons = [
-        { id: 'intermediate-btn', requiredLevel: 2 },
-        { id: 'advanced-btn', requiredLevel: 4 }
+        { id: 'intermediate-btn', requiredLevel: 2, xpRequired: 200 },
+        { id: 'advanced-btn', requiredLevel: 4, xpRequired: 400 }
       ];
 
       buttons.forEach(btn => {
         const el = document.getElementById(btn.id);
+        const xpNeeded = btn.xpRequired - xp;
+
         if (level >= btn.requiredLevel) {
           el.disabled = false;
           el.classList.remove('opacity-50', 'cursor-not-allowed');
           el.title = '';
+          const xpText = el.querySelector('.xp-text');
+          if (xpText) xpText.remove(); // Remove the text once unlocked
         } else {
           el.disabled = true;
           el.classList.add('opacity-50', 'cursor-not-allowed');
           el.title = `Unlocks at Level ${btn.requiredLevel}`;
+          if (!el.querySelector('.xp-text')) {
+            const xpText = document.createElement('span');
+            xpText.className = 'xp-text text-sm text-white';
+            xpText.textContent = ` (${xpNeeded} XP needed)`;
+            el.appendChild(xpText);
+          }
         }
       });
     }
 
-    function toggleMode() {
-      document.documentElement.classList.toggle('dark');
-    }
-
     window.onload = () => {
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
-      populateCategoryOptions();
       renderQuiz('basic');
       updateButtonStates();
     };
@@ -152,7 +145,6 @@
         <p class="mt-2">Daily Steps, Practice, Quizzes, and More</p>
         <p id="xp-display" class="text-sm mt-1">XP: 0 | Level: 0</p>
       </div>
-      <button onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Toggle Mode</button>
     </div>
   </header>
 
@@ -181,8 +173,6 @@
 
     <section id="quizzes">
       <h2 class="text-2xl font-semibold mb-4">Quizzes</h2>
-      <label for="quiz-category" class="block mb-2 font-medium">Choose a category:</label>
-      <select id="quiz-category" class="mb-4 p-2 rounded border"></select>
 
       <!-- Difficulty buttons -->
       <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4 mb-4">
