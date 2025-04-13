@@ -8,7 +8,6 @@
   <script src="quizzes.js"></script>
   <script>
     let xp = parseInt(localStorage.getItem('xp')) || 0;
-    let level = Math.floor(xp / 100);
 
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -17,24 +16,18 @@
       }
     }
 
-    // Function to populate the category dropdown
     function populateCategoryOptions() {
       const select = document.getElementById('quiz-category');
-      select.innerHTML = ''; // Clear existing options
-      if (quizCategories && quizCategories.length > 0) {
-        quizCategories.forEach(cat => {
-          const option = document.createElement('option');
-          option.value = cat.value;
-          option.textContent = cat.label;
-          select.appendChild(option);
-        });
-        select.addEventListener('change', () => renderQuiz(select.value));
-      } else {
-        console.error('No quiz categories found!');
-      }
+      select.innerHTML = '';
+      quizCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.value;
+        option.textContent = cat.label;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', () => renderQuiz(select.value));
     }
 
-    // Function to get a random quiz for a category
     function getRandomQuiz(category) {
       const available = quizzes[category] || [];
       if (available.length === 0) return null;
@@ -49,10 +42,9 @@
       };
     }
 
-    // Function to render the quiz
     function renderQuiz(category) {
       const quizArea = document.getElementById('quiz-area');
-      quizArea.innerHTML = ''; // Clear previous quiz
+      quizArea.innerHTML = '';
       const quiz = getRandomQuiz(category);
       if (!quiz) return;
 
@@ -94,49 +86,26 @@
       quizArea.appendChild(button);
     }
 
-    // Level-up handling and XP addition
-    function showLevelUp(newLevel) {
-      const confetti = document.createElement('div');
-      confetti.textContent = `🎉 Congrats! You reached Level ${newLevel}! 🎉`;
-      confetti.className = 'fixed top-10 left-1/2 transform -translate-x-1/2 bg-yellow-300 dark:bg-yellow-500 text-black px-6 py-3 rounded shadow-xl text-xl font-bold z-50';
-      document.body.appendChild(confetti);
-      setTimeout(() => confetti.remove(), 4000);
-    }
-
     function addXP(amount) {
-      const oldLevel = Math.floor(xp / 100);
       xp += amount;
       localStorage.setItem('xp', xp);
-      const newLevel = Math.floor(xp / 100);
-      if (newLevel > oldLevel) showLevelUp(newLevel);
-      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${newLevel}`;
+      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
     }
 
-    // Toggle between light and dark mode and update the button text and color
     function toggleMode() {
       document.documentElement.classList.toggle('dark');
-      const modeButton = document.getElementById('mode-toggle');
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        document.body.style.backgroundColor = 'rgb(40, 40, 40)';
+      const modeButton = document.getElementById('toggle-mode-button');
+      if (document.documentElement.classList.contains('dark')) {
         modeButton.textContent = 'Switch to Light Mode';
-        modeButton.classList.add('font-bold');
-        modeButton.classList.remove('text-black');
-        modeButton.classList.add('text-white');
       } else {
-        document.body.style.backgroundColor = 'white';
         modeButton.textContent = 'Switch to Dark Mode';
-        modeButton.classList.add('font-bold');
-        modeButton.classList.remove('text-white');
-        modeButton.classList.add('text-black');
       }
     }
 
-    // Initialization on page load
     window.onload = () => {
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
       populateCategoryOptions();
-      renderQuiz('basic'); // Initial quiz category
+      renderQuiz('basic');
     }
   </script>
   <style>
@@ -165,7 +134,7 @@
         <p class="mt-2">Daily Steps, Practice, Quizzes, and More</p>
         <p id="xp-display" class="text-sm mt-1">XP: 0 | Level: 0</p>
       </div>
-      <button id="mode-toggle" onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Switch to Dark Mode</button>
+      <button id="toggle-mode-button" onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Toggle Mode</button>
     </div>
   </header>
 
