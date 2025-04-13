@@ -8,6 +8,7 @@
   <script src="quizzes.js"></script>
   <script>
     let xp = parseInt(localStorage.getItem('xp')) || 0;
+    let level = Math.floor(xp / 100);
 
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -86,14 +87,30 @@
       quizArea.appendChild(button);
     }
 
+    function showLevelUp(newLevel) {
+      const confetti = document.createElement('div');
+      confetti.textContent = `🎉 Congrats! You reached Level ${newLevel}! 🎉`;
+      confetti.className = 'fixed top-10 left-1/2 transform -translate-x-1/2 bg-yellow-300 dark:bg-yellow-500 text-black px-6 py-3 rounded shadow-xl text-xl font-bold z-50';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
+    }
+
     function addXP(amount) {
+      const oldLevel = Math.floor(xp / 100);
       xp += amount;
       localStorage.setItem('xp', xp);
-      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
+      const newLevel = Math.floor(xp / 100);
+      if (newLevel > oldLevel) showLevelUp(newLevel);
+      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${newLevel}`;
     }
 
     function toggleMode() {
       document.documentElement.classList.toggle('dark');
+      if (document.documentElement.classList.contains('dark')) {
+        document.body.style.backgroundColor = 'rgb(40, 40, 40)';
+      } else {
+        document.body.style.backgroundColor = 'white';
+      }
     }
 
     window.onload = () => {
