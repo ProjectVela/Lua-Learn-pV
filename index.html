@@ -5,32 +5,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Learn Lua for Roblox</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="quizzes.js"></script>
   <script>
     let xp = parseInt(localStorage.getItem('xp')) || 0;
-    let level = Math.floor(xp / 100);
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function populateCategoryOptions() {
+      const select = document.getElementById('quiz-category');
+      select.innerHTML = '';
+      quizCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.value;
+        option.textContent = cat.label;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', () => renderQuiz(select.value));
+    }
+
+    function getRandomQuiz(category) {
+      const available = quizzes[category] || [];
+      if (available.length === 0) return null;
+      const randomQuiz = available[Math.floor(Math.random() * available.length)];
+      const options = [...randomQuiz.options];
+      const correctAnswer = options[randomQuiz.correctIndex];
+      shuffleArray(options);
+      return {
+        question: randomQuiz.question,
+        options: options,
+        correctIndex: options.indexOf(correctAnswer)
+      };
+    }
+
+    function renderQuiz(category) {
+      const quizArea = document.getElementById('quiz-area');
+      quizArea.innerHTML = '';
+      const quiz = getRandomQuiz(category);
+      if (!quiz) return;
+
+      const question = document.createElement('p');
+      question.className = 'mb-2';
+      question.textContent = quiz.question;
+
+      const ul = document.createElement('ul');
+      ul.className = 'space-y-1';
+
+      quiz.options.forEach((option, index) => {
+        const li = document.createElement('li');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'quiz-option';
+        input.value = index;
+        li.appendChild(input);
+        li.appendChild(document.createTextNode(' ' + option));
+        ul.appendChild(li);
+      });
+
+      const button = document.createElement('button');
+      button.textContent = 'Submit Answer';
+      button.className = 'mt-3 bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800';
+      button.onclick = () => {
+        const selected = document.querySelector('input[name="quiz-option"]:checked');
+        if (!selected) return alert('Please select an answer');
+        if (parseInt(selected.value) === quiz.correctIndex) {
+          alert('Correct! +10 XP');
+          addXP(10);
+          renderQuiz(category); // Load next random quiz
+        } else {
+          alert('Incorrect! Try again.');
+        }
+      };
+
+      quizArea.appendChild(question);
+      quizArea.appendChild(ul);
+      quizArea.appendChild(button);
+    }
 
     function addXP(amount) {
       xp += amount;
       localStorage.setItem('xp', xp);
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
-    }
-
-    function checkQuizAnswer() {
-      const radios = document.getElementsByName('quiz1');
-      let selectedIndex = -1;
-      for (let i = 0; i < radios.length; i++) {
-        if (radios[i].checked) {
-          selectedIndex = i;
-          break;
-        }
-      }
-
-      if (selectedIndex === 2) {
-        alert('Correct! +10 XP');
-        addXP(10);
-      } else {
-        alert('Incorrect! Try again.');
-      }
     }
 
     function toggleMode() {
@@ -39,6 +98,8 @@
 
     window.onload = () => {
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
+      populateCategoryOptions();
+      renderQuiz('basic');
     }
   </script>
   <style>
@@ -66,7 +127,6 @@
   </header>
 
   <main class="p-6 space-y-10">
-    <!-- Step-by-Step Lessons -->
     <section id="lessons">
       <h2 class="text-2xl font-semibold mb-4">Step-by-Step Lessons</h2>
       <ul class="space-y-2 list-disc list-inside">
@@ -78,7 +138,6 @@
       </ul>
     </section>
 
-    <!-- Daily Practice -->
     <section id="practice">
       <h2 class="text-2xl font-semibold mb-4">Daily Practice</h2>
       <p>Simple daily coding challenges for Roblox scripting:</p>
@@ -90,32 +149,13 @@
       </ul>
     </section>
 
-    <!-- Quizzes -->
     <section id="quizzes">
       <h2 class="text-2xl font-semibold mb-4">Quizzes</h2>
-
       <label for="quiz-category" class="block mb-2 font-medium">Choose a category:</label>
-      <select id="quiz-category" class="mb-4 p-2 rounded border">
-        <option value="basic">Lua Basics</option>
-        <option value="api">Roblox Studio API</option>
-        <option value="logic">Scripting Logic</option>
-        <option value="advanced">Advanced Concepts</option>
-        <option value="challenge">Game Design Challenges</option>
-      </select>
-
-      <div class="bg-white p-4 shadow rounded">
-        <p class="mb-2">What is the correct way to define a variable in Lua?</p>
-        <ul class="space-y-1">
-          <li><input type="radio" name="quiz1"> int x = 5</li>
-          <li><input type="radio" name="quiz1"> x := 5</li>
-          <li><input type="radio" name="quiz1"> local x = 5</li>
-          <li><input type="radio" name="quiz1"> var x = 5</li>
-        </ul>
-        <button onclick="checkQuizAnswer()" class="mt-3 bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Submit Answer</button>
-      </div>
+      <select id="quiz-category" class="mb-4 p-2 rounded border"></select>
+      <div id="quiz-area" class="bg-white p-4 shadow rounded"></div>
     </section>
 
-    <!-- Help Section -->
     <section id="help">
       <h2 class="text-2xl font-semibold mb-4">Need Help?</h2>
       <p>Join our Discord server or check out the Lua & Roblox API references:</p>
