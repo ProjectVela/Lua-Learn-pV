@@ -9,12 +9,6 @@
   <script>
     let xp = parseInt(localStorage.getItem('xp')) || 0;
 
-    const quizCategories = Object.keys(quizzes).map(key => ({
-  value: key,
-  label: key.charAt(0).toUpperCase() + key.slice(1)
-}));
-
-    
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -23,49 +17,30 @@
     }
 
     function populateCategoryOptions() {
-  const select = document.getElementById('quiz-category');
-  select.innerHTML = '';
-  quizCategories.forEach(cat => {
-    const option = document.createElement('option');
-    option.value = cat.value;
-    option.textContent = cat.label;
-    select.appendChild(option);
-  });
-}
-
-function setupCategoryDropdownListener() {
-  const select = document.getElementById('quiz-category');
-  select.addEventListener('change', () => {
-    const selectedCategory = select.value;
-    renderQuiz(selectedCategory);
-  });
-}
-
+      const select = document.getElementById('quiz-category');
+      select.innerHTML = '';
+      quizCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.value;
+        option.textContent = cat.label;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', () => renderQuiz(select.value));
+    }
 
     function getRandomQuiz(category) {
-  const available = quizzes[category] || [];
-  if (available.length === 0) return null;
-
-  // Randomly choose a quiz from the category
-  const randomQuiz = available[Math.floor(Math.random() * available.length)];
-
-  // Store the correct answer before shuffling
-  const correctAnswer = randomQuiz.options[randomQuiz.correctIndex];
-
-  // Shuffle the options
-  const options = [...randomQuiz.options];
-  shuffleArray(options);
-
-  // Find the new index of the correct answer after shuffling
-  const newCorrectIndex = options.findIndex(opt => opt === correctAnswer);
-
-  return {
-    question: randomQuiz.question,
-    options: options,
-    correctIndex: newCorrectIndex
-  };
-}
-
+      const available = quizzes[category] || [];
+      if (available.length === 0) return null;
+      const randomQuiz = available[Math.floor(Math.random() * available.length)];
+      const options = [...randomQuiz.options];
+      const correctAnswer = options[randomQuiz.correctIndex];
+      shuffleArray(options);
+      return {
+        question: randomQuiz.question,
+        options: options,
+        correctIndex: options.indexOf(correctAnswer)
+      };
+    }
 
     function renderQuiz(category) {
       const quizArea = document.getElementById('quiz-area');
@@ -122,17 +97,10 @@ function setupCategoryDropdownListener() {
     }
 
     window.onload = () => {
-  document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
-  populateCategoryOptions();
-
-  const select = document.getElementById('quiz-category');
-  select.addEventListener('change', () => {
-    renderQuiz(select.value);
-  });
-
-  renderQuiz('basic');
-}
-
+      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
+      populateCategoryOptions();
+      renderQuiz('basic');
+    }
   </script>
   <style>
     .gradient-header {
@@ -144,9 +112,15 @@ function setupCategoryDropdownListener() {
     .dark .text-gray-800 {
       color: #f9fafb;
     }
+    .dark-mode.dark {
+      background-color: rgb(40, 40, 40);
+    }
+    .dark #quiz-area {
+      background-color: #2a2a2a;
+    }
   </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+<body class="bg-gray-100 dark-mode text-gray-800 dark:text-gray-100 transition-colors duration-300">
   <header class="gradient-header text-white p-6 shadow-md">
     <div class="flex justify-between items-center">
       <div>
