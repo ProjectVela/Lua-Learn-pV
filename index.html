@@ -90,46 +90,61 @@
       xp += amount;
       localStorage.setItem('xp', xp);
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
+      updateButtonStates();
+    }
+
+    function updateButtonStates() {
+      const level = Math.floor(xp / 100);
+
+      const buttons = [
+        { id: 'intermediate-btn', requiredLevel: 2 },
+        { id: 'advanced-btn', requiredLevel: 4 }
+      ];
+
+      buttons.forEach(btn => {
+        const el = document.getElementById(btn.id);
+        if (level >= btn.requiredLevel) {
+          el.disabled = false;
+          el.classList.remove('opacity-50', 'cursor-not-allowed');
+          el.title = '';
+        } else {
+          el.disabled = true;
+          el.classList.add('opacity-50', 'cursor-not-allowed');
+          el.title = `Unlocks at Level ${btn.requiredLevel}`;
+        }
+      });
+    }
+
+    function toggleMode() {
+      document.documentElement.classList.toggle('dark');
     }
 
     window.onload = () => {
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
       populateCategoryOptions();
       renderQuiz('basic');
-    }
+      updateButtonStates();
+    };
   </script>
   <style>
-    body {
-      background-color: #282828; /* Set background to #282828 */
-      color: white;
-    }
-
     .gradient-header {
       background: linear-gradient(90deg, #2c003e, #001f3f);
     }
-
-    .bg-white {
-      background-color: #333; /* Adjust the background color of white elements */
-    }
-
-    .text-gray-800 {
-      color: #f9fafb;
-    }
-
     .dark .bg-white {
       background-color: #1f2937;
     }
-
-    .dark #quiz-area {
-      background-color: #333; /* Dark background for quiz area */
+    .dark .text-gray-800 {
+      color: #f9fafb;
     }
-
-    #quiz-area {
-      background-color: #333; /* Darker background for the quiz area */
+    .dark-mode.dark {
+      background-color: rgb(40, 40, 40);
+    }
+    .dark #quiz-area {
+      background-color: #2a2a2a;
     }
   </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-100 dark-mode text-gray-800 dark:text-gray-100 transition-colors duration-300">
   <header class="gradient-header text-white p-6 shadow-md">
     <div class="flex justify-between items-center">
       <div>
@@ -137,6 +152,7 @@
         <p class="mt-2">Daily Steps, Practice, Quizzes, and More</p>
         <p id="xp-display" class="text-sm mt-1">XP: 0 | Level: 0</p>
       </div>
+      <button onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Toggle Mode</button>
     </div>
   </header>
 
@@ -165,11 +181,16 @@
 
     <section id="quizzes">
       <h2 class="text-2xl font-semibold mb-4">Quizzes</h2>
-     <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4 mb-4">
-  <button onclick="renderQuiz('basic')" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Basic</button>
-  <button onclick="renderQuiz('intermediate')" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Intermediate</button>
-  <button onclick="renderQuiz('advanced')" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Advanced</button>
-</div>
+      <label for="quiz-category" class="block mb-2 font-medium">Choose a category:</label>
+      <select id="quiz-category" class="mb-4 p-2 rounded border"></select>
+
+      <!-- Difficulty buttons -->
+      <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4 mb-4">
+        <button onclick="renderQuiz('basic')" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Basic</button>
+        <button id="intermediate-btn" onclick="renderQuiz('intermediate')" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800" disabled>Intermediate</button>
+        <button id="advanced-btn" onclick="renderQuiz('advanced')" class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800" disabled>Advanced</button>
+      </div>
+
       <div id="quiz-area" class="bg-white p-4 shadow rounded"></div>
     </section>
 
