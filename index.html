@@ -92,16 +92,6 @@
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
     }
 
-    function toggleMode() {
-      document.documentElement.classList.toggle('dark');
-      const modeButton = document.getElementById('toggle-mode-button');
-      if (document.documentElement.classList.contains('dark')) {
-        modeButton.textContent = 'Switch to Light Mode';
-      } else {
-        modeButton.textContent = 'Switch to Dark Mode';
-      }
-    }
-
     window.onload = () => {
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
       populateCategoryOptions();
@@ -112,21 +102,25 @@
     .gradient-header {
       background: linear-gradient(90deg, #2c003e, #001f3f);
     }
+    body {
+      background-color: #2a2a2a;
+      color: white;
+    }
+    .bg-white {
+      background-color: #333;
+    }
+    .text-gray-800 {
+      color: #f9fafb;
+    }
     .dark .bg-white {
       background-color: #1f2937;
     }
-    .dark .text-gray-800 {
-      color: #f9fafb;
-    }
-    .dark-mode.dark {
-      background-color: rgb(40, 40, 40);
-    }
     .dark #quiz-area {
-      background-color: #2a2a2a;
+      background-color: #333;
     }
   </style>
 </head>
-<body class="bg-gray-100 dark-mode text-gray-800 dark:text-gray-100 transition-colors duration-300">
+<body class="bg-gray-900 text-white">
   <header class="gradient-header text-white p-6 shadow-md">
     <div class="flex justify-between items-center">
       <div>
@@ -134,7 +128,6 @@
         <p class="mt-2">Daily Steps, Practice, Quizzes, and More</p>
         <p id="xp-display" class="text-sm mt-1">XP: 0 | Level: 0</p>
       </div>
-      <button id="toggle-mode-button" onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Toggle Mode</button>
     </div>
   </header>
 
