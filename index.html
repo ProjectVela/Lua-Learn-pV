@@ -17,18 +17,24 @@
       }
     }
 
+    // Function to populate the category dropdown
     function populateCategoryOptions() {
       const select = document.getElementById('quiz-category');
-      select.innerHTML = '';
-      quizCategories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.value;
-        option.textContent = cat.label;
-        select.appendChild(option);
-      });
-      select.addEventListener('change', () => renderQuiz(select.value));
+      select.innerHTML = ''; // Clear existing options
+      if (quizCategories && quizCategories.length > 0) {
+        quizCategories.forEach(cat => {
+          const option = document.createElement('option');
+          option.value = cat.value;
+          option.textContent = cat.label;
+          select.appendChild(option);
+        });
+        select.addEventListener('change', () => renderQuiz(select.value));
+      } else {
+        console.error('No quiz categories found!');
+      }
     }
 
+    // Function to get a random quiz for a category
     function getRandomQuiz(category) {
       const available = quizzes[category] || [];
       if (available.length === 0) return null;
@@ -43,9 +49,10 @@
       };
     }
 
+    // Function to render the quiz
     function renderQuiz(category) {
       const quizArea = document.getElementById('quiz-area');
-      quizArea.innerHTML = '';
+      quizArea.innerHTML = ''; // Clear previous quiz
       const quiz = getRandomQuiz(category);
       if (!quiz) return;
 
@@ -87,6 +94,7 @@
       quizArea.appendChild(button);
     }
 
+    // Level-up handling and XP addition
     function showLevelUp(newLevel) {
       const confetti = document.createElement('div');
       confetti.textContent = `🎉 Congrats! You reached Level ${newLevel}! 🎉`;
@@ -104,19 +112,26 @@
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${newLevel}`;
     }
 
+    // Toggle between light and dark mode and update the button text
     function toggleMode() {
       document.documentElement.classList.toggle('dark');
+      const modeButton = document.getElementById('mode-toggle');
       if (document.documentElement.classList.contains('dark')) {
         document.body.style.backgroundColor = 'rgb(40, 40, 40)';
+        modeButton.textContent = 'Switch to Light Mode';
+        modeButton.classList.add('font-bold');
       } else {
         document.body.style.backgroundColor = 'white';
+        modeButton.textContent = 'Switch to Dark Mode';
+        modeButton.classList.add('font-bold');
       }
     }
 
+    // Initialization on page load
     window.onload = () => {
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
       populateCategoryOptions();
-      renderQuiz('basic');
+      renderQuiz('basic'); // Initial quiz category
     }
   </script>
   <style>
@@ -145,7 +160,7 @@
         <p class="mt-2">Daily Steps, Practice, Quizzes, and More</p>
         <p id="xp-display" class="text-sm mt-1">XP: 0 | Level: 0</p>
       </div>
-      <button onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Toggle Mode</button>
+      <button id="mode-toggle" onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Switch to Dark Mode</button>
     </div>
   </header>
 
