@@ -43,18 +43,29 @@ function setupCategoryDropdownListener() {
 
 
     function getRandomQuiz(category) {
-      const available = quizzes[category] || [];
-      if (available.length === 0) return null;
-      const randomQuiz = available[Math.floor(Math.random() * available.length)];
-      const options = [...randomQuiz.options];
-      const correctAnswer = options[randomQuiz.correctIndex];
-      shuffleArray(options);
-      return {
-        question: randomQuiz.question,
-        options: options,
-        correctIndex: options.indexOf(correctAnswer)
-      };
-    }
+  const available = quizzes[category] || [];
+  if (available.length === 0) return null;
+
+  // Randomly choose a quiz from the category
+  const randomQuiz = available[Math.floor(Math.random() * available.length)];
+
+  // Store the correct answer before shuffling
+  const correctAnswer = randomQuiz.options[randomQuiz.correctIndex];
+
+  // Shuffle the options
+  const options = [...randomQuiz.options];
+  shuffleArray(options);
+
+  // Find the new index of the correct answer after shuffling
+  const newCorrectIndex = options.findIndex(opt => opt === correctAnswer);
+
+  return {
+    question: randomQuiz.question,
+    options: options,
+    correctIndex: newCorrectIndex
+  };
+}
+
 
     function renderQuiz(category) {
       const quizArea = document.getElementById('quiz-area');
