@@ -17,16 +17,24 @@
     }
 
     function populateCategoryOptions() {
-      const select = document.getElementById('quiz-category');
-      select.innerHTML = '';
-      quizCategories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.value;
-        option.textContent = cat.label;
-        select.appendChild(option);
-      });
-      select.addEventListener('change', () => renderQuiz(select.value));
-    }
+  const select = document.getElementById('quiz-category');
+  select.innerHTML = '';
+  quizCategories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat.value;
+    option.textContent = cat.label;
+    select.appendChild(option);
+  });
+}
+
+function setupCategoryListener() {
+  const select = document.getElementById('quiz-category');
+  select.addEventListener('change', () => {
+    const selectedCategory = select.value;
+    renderQuiz(selectedCategory);
+  });
+}
+
 
     function getRandomQuiz(category) {
       const available = quizzes[category] || [];
