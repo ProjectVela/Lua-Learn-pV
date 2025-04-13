@@ -5,11 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Learn Lua for Roblox</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script>
+    let xp = parseInt(localStorage.getItem('xp')) || 0;
+    let level = Math.floor(xp / 100);
+
+    function addXP(amount) {
+      xp += amount;
+      localStorage.setItem('xp', xp);
+      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
+    }
+
+    function checkQuizAnswer() {
+      const radios = document.getElementsByName('quiz1');
+      let selectedIndex = -1;
+      for (let i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+          selectedIndex = i;
+          break;
+        }
+      }
+
+      if (selectedIndex === 2) {
+        alert('Correct! +10 XP');
+        addXP(10);
+      } else {
+        alert('Incorrect! Try again.');
+      }
+    }
+
+    function toggleMode() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    window.onload = () => {
+      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
+    }
+  </script>
+  <style>
+    .gradient-header {
+      background: linear-gradient(90deg, #2c003e, #001f3f);
+    }
+    .dark .bg-white {
+      background-color: #1f2937;
+    }
+    .dark .text-gray-800 {
+      color: #f9fafb;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <header class="bg-purple-700 text-white p-6 shadow-md">
-    <h1 class="text-3xl font-bold">Learn Lua for Roblox</h1>
-    <p class="mt-2">Daily Steps, Practice, Quizzes, and More</p>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+  <header class="gradient-header text-white p-6 shadow-md">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold">Learn Lua for Roblox</h1>
+        <p class="mt-2">Daily Steps, Practice, Quizzes, and More</p>
+        <p id="xp-display" class="text-sm mt-1">XP: 0 | Level: 0</p>
+      </div>
+      <button onclick="toggleMode()" class="bg-white text-black px-3 py-1 rounded shadow hover:bg-gray-200">Toggle Mode</button>
+    </div>
   </header>
 
   <main class="p-6 space-y-10">
@@ -22,7 +75,6 @@
         <li><strong>Day 3:</strong> Functions and Events</li>
         <li><strong>Day 4:</strong> Tables and Loops</li>
         <li><strong>Day 5:</strong> Creating Your First Game Script</li>
-        <!-- Add more days as needed -->
       </ul>
     </section>
 
@@ -41,14 +93,25 @@
     <!-- Quizzes -->
     <section id="quizzes">
       <h2 class="text-2xl font-semibold mb-4">Quizzes</h2>
+
+      <label for="quiz-category" class="block mb-2 font-medium">Choose a category:</label>
+      <select id="quiz-category" class="mb-4 p-2 rounded border">
+        <option value="basic">Lua Basics</option>
+        <option value="api">Roblox Studio API</option>
+        <option value="logic">Scripting Logic</option>
+        <option value="advanced">Advanced Concepts</option>
+        <option value="challenge">Game Design Challenges</option>
+      </select>
+
       <div class="bg-white p-4 shadow rounded">
         <p class="mb-2">What is the correct way to define a variable in Lua?</p>
         <ul class="space-y-1">
           <li><input type="radio" name="quiz1"> int x = 5</li>
           <li><input type="radio" name="quiz1"> x := 5</li>
-          <li><input type="radio" name="quiz1"> <strong>local x = 5</strong></li>
+          <li><input type="radio" name="quiz1"> local x = 5</li>
           <li><input type="radio" name="quiz1"> var x = 5</li>
         </ul>
+        <button onclick="checkQuizAnswer()" class="mt-3 bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Submit Answer</button>
       </div>
     </section>
 
@@ -64,7 +127,7 @@
     </section>
   </main>
 
-  <footer class="bg-purple-700 text-white text-center p-4 mt-10">
+  <footer class="gradient-header text-white text-center p-4 mt-10">
     <p>&copy; 2025 Learn Lua for Roblox. All rights reserved.</p>
   </footer>
 </body>
