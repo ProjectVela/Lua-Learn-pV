@@ -112,18 +112,23 @@
       document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${newLevel}`;
     }
 
-    // Toggle between light and dark mode and update the button text
+    // Toggle between light and dark mode and update the button text and color
     function toggleMode() {
       document.documentElement.classList.toggle('dark');
       const modeButton = document.getElementById('mode-toggle');
-      if (document.documentElement.classList.contains('dark')) {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
         document.body.style.backgroundColor = 'rgb(40, 40, 40)';
         modeButton.textContent = 'Switch to Light Mode';
         modeButton.classList.add('font-bold');
+        modeButton.classList.remove('text-black');
+        modeButton.classList.add('text-white');
       } else {
         document.body.style.backgroundColor = 'white';
         modeButton.textContent = 'Switch to Dark Mode';
         modeButton.classList.add('font-bold');
+        modeButton.classList.remove('text-white');
+        modeButton.classList.add('text-black');
       }
     }
 
