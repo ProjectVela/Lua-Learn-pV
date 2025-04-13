@@ -27,7 +27,7 @@
   });
 }
 
-function setupCategoryListener() {
+function setupCategoryDropdownListener() {
   const select = document.getElementById('quiz-category');
   select.addEventListener('change', () => {
     const selectedCategory = select.value;
@@ -105,10 +105,17 @@ function setupCategoryListener() {
     }
 
     window.onload = () => {
-      document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
-      populateCategoryOptions();
-      renderQuiz('basic');
-    }
+  document.getElementById('xp-display').textContent = `XP: ${xp} | Level: ${Math.floor(xp / 100)}`;
+  populateCategoryOptions();
+
+  const select = document.getElementById('quiz-category');
+  select.addEventListener('change', () => {
+    renderQuiz(select.value);
+  });
+
+  renderQuiz('basic');
+}
+
   </script>
   <style>
     .gradient-header {
