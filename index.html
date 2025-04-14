@@ -161,15 +161,86 @@
     </section>
 
     <section id="practice">
-      <h2 class="text-2xl font-semibold mb-4">Daily Practice</h2>
-      <p>Simple daily coding challenges for Roblox scripting:</p>
-      <ul class="list-decimal list-inside space-y-1">
-        <li>Create a part that changes color when clicked.</li>
-        <li>Make a leaderboard that tracks player score.</li>
-        <li>Spawn an object on key press.</li>
-        <li>Build a basic GUI that shows player health.</li>
-      </ul>
-    </section>
+  <h2 class="text-2xl font-semibold mb-4">Daily Practice</h2>
+  <p>Simple daily coding challenges for Roblox scripting:</p>
+  <ul class="list-decimal list-inside space-y-3">
+    <li>
+      Create a part that changes color when clicked.
+      <button onclick="toggleSolution(0)" class="ml-2 bg-purple-700 text-white px-2 py-1 text-sm rounded hover:bg-purple-800">Show Solution</button>
+      <div id="solution-0" class="hidden text-sm mt-2 bg-gray-800 text-white p-2 rounded">
+        Use a ClickDetector and connect a MouseClick event to change the part's BrickColor.<br>
+        <pre><code>
+local part = script.Parent
+local clickDetector = part:FindFirstChildOfClass("ClickDetector")
+
+clickDetector.MouseClick:Connect(function()
+  part.BrickColor = BrickColor.Random()
+end)
+        </code></pre>
+      </div>
+    </li>
+
+    <li>
+      Make a leaderboard that tracks player score.
+      <button onclick="toggleSolution(1)" class="ml-2 bg-purple-700 text-white px-2 py-1 text-sm rounded hover:bg-purple-800">Show Solution</button>
+      <div id="solution-1" class="hidden text-sm mt-2 bg-gray-800 text-white p-2 rounded">
+        Use a `leaderstats` folder with an IntValue for score in each player.<br>
+        <pre><code>
+game.Players.PlayerAdded:Connect(function(player)
+  local leaderstats = Instance.new("Folder")
+  leaderstats.Name = "leaderstats"
+  leaderstats.Parent = player
+
+  local score = Instance.new("IntValue")
+  score.Name = "Score"
+  score.Value = 0
+  score.Parent = leaderstats
+end)
+        </code></pre>
+      </div>
+    </li>
+
+    <li>
+      Spawn an object on key press.
+      <button onclick="toggleSolution(2)" class="ml-2 bg-purple-700 text-white px-2 py-1 text-sm rounded hover:bg-purple-800">Show Solution</button>
+      <div id="solution-2" class="hidden text-sm mt-2 bg-gray-800 text-white p-2 rounded">
+        Use a LocalScript and `UserInputService` to detect key press.<br>
+        <pre><code>
+local UIS = game:GetService("UserInputService")
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local object = replicatedStorage:WaitForChild("MyObject")
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+  if not gameProcessed and input.KeyCode == Enum.KeyCode.E then
+    local clone = object:Clone()
+    clone.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0,5,0)
+    clone.Parent = workspace
+  end
+end)
+        </code></pre>
+      </div>
+    </li>
+
+    <li>
+      Build a basic GUI that shows player health.
+      <button onclick="toggleSolution(3)" class="ml-2 bg-purple-700 text-white px-2 py-1 text-sm rounded hover:bg-purple-800">Show Solution</button>
+      <div id="solution-3" class="hidden text-sm mt-2 bg-gray-800 text-white p-2 rounded">
+        Use a LocalScript and bind it to the player's Humanoid health.<br>
+        <pre><code>
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local humanoid = char:WaitForChild("Humanoid")
+local textLabel = script.Parent:WaitForChild("HealthLabel")
+
+humanoid.HealthChanged:Connect(function(health)
+  textLabel.Text = "Health: " .. math.floor(health)
+end)
+        </code></pre>
+      </div>
+    </li>
+  </ul>
+</section>
+
 
     <section id="quizzes">
       <h2 class="text-2xl font-semibold mb-4">Quizzes</h2>
@@ -198,5 +269,14 @@
   <footer class="gradient-header text-white text-center p-4 mt-10">
     <p>&copy; 2025 Learn Lua for Roblox. All rights reserved.</p>
   </footer>
+
+  <script>
+  function toggleSolution(index) {
+    const el = document.getElementById(`solution-${index}`);
+    el.classList.toggle('hidden');
+  }
+</script>
+
+  
 </body>
 </html>
